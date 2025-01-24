@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect, url_for, render_template
+from flask import Flask, request, redirect, url_for, render_template, jsonify
 from os import getenv
 from dotenv import load_dotenv
 from flask_mysqldb import MySQL
@@ -53,6 +53,35 @@ def add_personaje():
     
 
     return redirect(url_for('index'))
+
+
+
+@app.route('/personajes', methods=['GET'])
+def get_personajes():
+    cursor = mysql.connection.cursor()
+    sql = "SELECT * FROM personajes;"
+    cursor.execute(sql)
+    data = cursor.fetchall()
+    personajes = []
+    for row in data:
+        personaje = {
+            'id': row[0],
+            'nombre': row[1], 
+            'apellido': row[2], 
+            'url_imagen': row[3], 
+            'puesto': row[4], 
+            'departamento': row[5], 
+            'descripcion': row[6], 
+            'primera_aparicion': row[7], 
+            'ultima_aparicion': row[8], 
+            'total_episodios': row[9], 
+            'frase_iconica': row[10], 
+            'hobbie_principal': row[11], 
+            'ciudad_origen': row[12]
+        }
+        personajes.append(personaje)
+    
+    return jsonify(personajes)
 
 
 
